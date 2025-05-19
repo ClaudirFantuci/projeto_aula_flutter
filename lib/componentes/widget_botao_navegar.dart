@@ -6,11 +6,11 @@ class WidgetBotaoNavegar extends StatelessWidget {
   final BuildContext context;
 
   const WidgetBotaoNavegar({
-    key,
+    super.key,
     required this.rota,
     required this.rotulo,
     required this.context,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

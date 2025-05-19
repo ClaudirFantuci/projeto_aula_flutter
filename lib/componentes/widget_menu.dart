@@ -7,77 +7,109 @@ class WidgetMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget criarMenu({
-      required IconData icone,
       required String rotulo,
       required String rota,
     }) {
       return ListTile(
-        leading: Icon(icone),
-        title: Text(rotulo),
+        title: Text(rotulo, style: const TextStyle(color: Colors.yellow)),
         onTap: () => Navigator.pushNamed(context, rota),
+        tileColor: Colors.grey[850],
       );
     }
 
-    // Gera lista de horários de 30 em 30 minutos, das 06:00 às 22:00
-    List<String> gerarHorarios() {
-      List<String> horarios = [];
-      for (int hora = 6; hora <= 21; hora++) {
-        horarios.add('${hora.toString().padLeft(2, '0')}:00');
-        horarios.add('${hora.toString().padLeft(2, '0')}:30');
-      }
-      return horarios;
-    }
+    List<String> horarios = ["08:00", "10:00", "15:00", "18:00"];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Menu Principal')),
       drawer: Drawer(
+        backgroundColor: Colors.black,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text(
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.yellow, Colors.amber],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: const Text(
                 'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             criarMenu(
-              icone: Icons.map,
               rotulo: 'Cadastro de Academias',
               rota: Rotas.academias,
+            ),
+            criarMenu(
+              rotulo: 'Cadastro de Alunos',
+              rota: Rotas.form,
+            ),
+            criarMenu(
+              rotulo: 'Lista de Academias',
+              rota: Rotas.listaAcademias,
+            ),
+            criarMenu(
+              rotulo: 'Lista de Alunos',
+              rota: Rotas.listaAlunos,
+            ),
+            criarMenu(
+              rotulo: 'Novo Agendamento',
+              rota: Rotas.agendamento,
             ),
           ],
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, // 3 colunas
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 8.0,
-            childAspectRatio: 2, // Proporção para os cards
-          ),
-          itemCount: gerarHorarios().length,
+        child: ListView.builder(
+          itemCount: horarios.length,
           itemBuilder: (context, index) {
-            final horario = gerarHorarios()[index];
+            final horario = horarios[index];
             return Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: Center(
-                child: Text(
-                  horario,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                title: Text(
+                  'Horário: $horario',
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    Text(
+                      'Aluno: Aluno ${index + 1}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    Text(
+                      'Academia: Academia ${index + 1}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.pushNamed(context, Rotas.detalhesAgendamento,
+                      arguments: {
+                        'aluno': 'Aluno ${index + 1}',
+                        'academia': 'Academia ${index + 1}',
+                        'horario': horario,
+                      });
+                },
               ),
             );
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(context, Rotas.agendamento),
+        child: const Icon(Icons.add),
       ),
     );
   }
